@@ -1,13 +1,16 @@
 /**
 	main.cpp
 	
-	mian driver program for project
+	main driver program for project
 	
 */
 
-int main(void) 
+#include "world.h"
+
+int 
+main(void) 
 {
-	World w;
+	cw::World w;
 	
 	
 }

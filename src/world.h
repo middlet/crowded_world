@@ -13,8 +13,11 @@ namespace cw {
 class World
 {
 public:
-    World() : _width(640), _height(480) {};
-    ~World();
+    World();
+    ~World() {};
+    
+    int width();
+    int height();
 
 
 private:

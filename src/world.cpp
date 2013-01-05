@@ -7,7 +7,7 @@
 #include "world.h"
 
 cw::World::World()
-    : _width(640), _height(480)
+    : _width(640), _height(480), _world(_width, _height, CV_8UC3, cv::Scalar(255,255,255))
 {
 
 }

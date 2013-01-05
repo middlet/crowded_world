@@ -2,11 +2,11 @@
 # cmake for src directory of crowded_world
 #
 
-#find_package( OpenCV REQUIRED )
+find_package( OpenCV REQUIRED )
 
 include_directories(. ${COMMON_INCLUDES})
-set(CMAKE_CXX_FLAGS "-g")
-# opencv version
+
+# include opencv
 add_executable(cworld main.cpp world.cpp)
 target_link_libraries(cworld ${OpenCV_LIBS})
 

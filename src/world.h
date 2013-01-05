@@ -8,6 +8,8 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <opencv2/core/core.hpp>
+
 namespace cw {
 
 class World
@@ -23,6 +25,7 @@ public:
 private:
     int _width;
     int _height;
+    cv::Mat _world;
 }; // class World
 
 } // namespace cw

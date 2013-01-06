@@ -5,12 +5,14 @@
 	
 */
 
-#include "world.h"
+#include "universe.h"
 
 int 
 main(void) 
 {
-	cw::World w;
+	cw::Universe u;
+    u.display();
+    
 	
-	
+	return 0;
 }

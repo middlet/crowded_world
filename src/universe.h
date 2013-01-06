@@ -5,30 +5,27 @@
     world in which to simulate within
 */
 
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef UNIVERSE_H
+#define UNIVERSE_H
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include "world.h"
+
 
 namespace cw {
 
-class World
+class Universe
 {
 public:
-    World();
-    ~World() {};
+    Universe();
     
-    int width();
-    int height();
-
-    cv::Mat getBackground();
+    void display();
 
 private:
-    int _width;
-    int _height;
-    cv::Mat _world;
-}; // class World
+    World _w;
+}; // class Universe
 
 } // namespace cw
 
-#endif
+#endif // UNIVERSE_HH

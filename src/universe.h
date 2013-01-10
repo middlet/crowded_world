@@ -25,6 +25,8 @@ public:
     Universe(int na);
     
     void display();
+    void animate();
+
 
 private:
     World _w;

@@ -41,6 +41,51 @@ cw::Universe::display()
    
 }
 
+void
+cw::Universe::animate()
+{
+    
+    cv::RNG rng(0x10);
+    unsigned int N = _agents.size();
+
+    display();
+    // move the agents
+    // create shuffled list
+    std::vector<unsigned int> order;
+    for (unsigned int oi=0; oi<N; oi++) {
+        order.push_back(oi);
+    }
+    for (unsigned int oi=0; oi<N; oi++) {
+        // swap 2 indexes around
+        unsigned int i = rng.uniform(0,N-1), j = rng.uniform(0,N-1);
+        unsigned int temp = order[i];
+        order[i] = order[j];
+        order[j] = temp;
+    }
+    // move the agent forward if possible
+    for (unsigned int oi=0; oi<N; oi++) {
+        unsigned int ai = order[oi];
+        cv::Point xy = _agents[ai].centre();
+        if (xy.y-25>0) {
+            xy.y -= 25;
+            _agents[ai].setCentre(xy);
+/*            // check doesnt intersect
+            for (unsigned int ii=0; ii<N; ii++) {
+                if (ii!=ai) {
+                    if (intersect(_agents[ai], _agents[ii])) {
+                        xy.y += 25;
+                        _agents[ai].setCentre(xy);
+                        std::cout << "fail " << ii << std::endl;
+                        break;
+                    }
+                }
+            }*/
+        }
+            
+    }
+    display();
+    
+}
 
 void
 cw::Universe::create_agents()

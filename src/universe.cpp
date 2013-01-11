@@ -28,8 +28,7 @@ cw::Universe::Universe(int na)
 void
 cw::Universe::display()
 {
-    std::cerr << "Universe::display" << std::endl;
-    cv::Mat im = _w.getBackground();
+    cv::Mat im = _w.getBackground().clone();
     // draw agents
     for (int ai=0; ai<_na; ai++) {
         cv::circle(im, _agents[ai].centre(), _agents[ai].radius(), 
@@ -37,7 +36,7 @@ cw::Universe::display()
     }
     // display result
     cv::imshow("theworld", im);
-    cv::waitKey();
+    cv::waitKey(250);
    
 }
 
@@ -49,41 +48,25 @@ cw::Universe::animate()
     unsigned int N = _agents.size();
 
     display();
-    // move the agents
-    // create shuffled list
-    std::vector<unsigned int> order;
-    for (unsigned int oi=0; oi<N; oi++) {
-        order.push_back(oi);
-    }
-    for (unsigned int oi=0; oi<N; oi++) {
-        // swap 2 indexes around
-        unsigned int i = rng.uniform(0,N-1), j = rng.uniform(0,N-1);
-        unsigned int temp = order[i];
-        order[i] = order[j];
-        order[j] = temp;
-    }
-    // move the agent forward if possible
-    for (unsigned int oi=0; oi<N; oi++) {
-        unsigned int ai = order[oi];
-        cv::Point xy = _agents[ai].centre();
-        if (xy.y-25>0) {
-            xy.y -= 25;
-            _agents[ai].setCentre(xy);
-/*            // check doesnt intersect
-            for (unsigned int ii=0; ii<N; ii++) {
-                if (ii!=ai) {
-                    if (intersect(_agents[ai], _agents[ii])) {
-                        xy.y += 25;
-                        _agents[ai].setCentre(xy);
-                        std::cout << "fail " << ii << std::endl;
-                        break;
-                    }
-                }
-            }*/
+    for (int it=0; it<100; it++) {
+
+        // move the agents
+        // create shuffled list
+        std::vector<unsigned int> order;
+        for (unsigned int oi=0; oi<N; oi++) {
+            order.push_back(oi);
         }
-            
-    }
-    display();
+        for (unsigned int oi=0; oi<N; oi++) {
+            // swap 2 indexes around
+            unsigned int i = rng.uniform(0,N-1), j = rng.uniform(0,N-1);
+            unsigned int temp = order[i];
+            order[i] = order[j];
+            order[j] = temp;
+        }
+        move_agents(rng, order, N);
+        display();
+    } // for it
+    
     
 }
 
@@ -127,4 +110,71 @@ cw::Universe::intersect(cw::Agent &a1, cw::Agent &a2)
         return true;
     else
         return false;
+}
+
+bool
+cw::Universe::collide(unsigned int N, unsigned int ai, cv::Point oxy, cv::Point nxy)
+{
+    // move agent
+    _agents[ai].setCentre(nxy);
+    // check there is no intersection after the move
+    bool overlap = true;
+    for (unsigned int ii=0; ii<N; ii++) {
+        if (ii!=ai) { // do not check if this is the agent
+            if (intersect(_agents[ai], _agents[ii])) {
+                overlap = false;
+                break;
+            }
+        }
+    }
+    // reset agent location
+    _agents[ai].setCentre(oxy);
+    
+    return overlap;
+}
+
+void 
+cw::Universe::move_agents(cv::RNG &rng, std::vector<unsigned int> order, unsigned int N)
+{
+    for (unsigned int oi=0; oi<N; oi++) {
+        unsigned int ai = order[oi];
+        cv::Point xy = _agents[ai].centre();
+        // create candidate moves
+        std::vector<cv::Point> p(5, xy);
+        p[0].y -= 25;
+        p[1].y -= 25; p[1].x -= 25;
+        p[2].y -= 25; p[2].x += 25;
+        p[3].x -= 25;
+        p[4].x += 25;
+        
+        for (int pi=0; pi<5; pi++)
+            std::cout << p[pi] << " ";
+        std::cout << std::endl;
+        
+        // validate the new location
+        std::vector<bool> valid(5, true);
+        for (unsigned int pi=0; pi<p.size(); pi++) {
+            if (collide(oi, ai, xy, p[pi]))
+                valid[pi] = false;
+        }
+        for (int pi=0; pi<5; pi++)
+            std::cout << valid[pi] << " ";
+        std::cout << std::endl;
+        // choose new location from list random
+        int pos=-1;
+        for (unsigned int pi=0; pi<p.size(); pi++)
+            if (valid[pi]) {
+                pos = pi;
+                break;
+            }
+        if (pos>=0)
+            xy = p[pos];
+    
+        if (xy.y<0)
+            xy.y = _w.height();
+        _agents[ai].setCentre(xy);
+        p.clear();
+        valid.clear();
+    }
+    
 }

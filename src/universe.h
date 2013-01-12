@@ -37,7 +37,7 @@ private:
     cv::RNG _rng;
     
     void initialise();
-    std::vector<unsigned int> nearby_agents(int ai, int radius);
+    void initial_location(bool reset=false, int ai=-1);
 
 
 }; // class Universe

@@ -61,19 +61,7 @@ cw::Universe::update()
         //std::vector<unsigned int> nearby = close_agents(ni, 10);
         
         if (respawn) {
-            const float MINR = 6, MAXR = 20;
-            // random size
-            float r = _rng.uniform(MINR, MAXR);
-            // random location
-            int x = _rng.uniform(10,_width-10);
-            int y = _height-r;
-            // random velocity
-            float angle = -M_PI/2;
-            float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
-            int vx = speed*cos(angle);
-            int vy = speed*sin(angle);
-            _agents[ni] = cv::Scalar(x,y,vx,vy);
-            _aradius[ni] = r;
+            initial_location(true, ni);
         }
         else {
             _agents[ni][0] += dx;
@@ -88,38 +76,47 @@ cw::Universe::update()
 void
 cw::Universe::initialise()
 {
-    const float MINR = 6, MAXR = 20;
     
     for (int ni=0; ni<_na; ni++) {
-        // random size
-        float r = _rng.uniform(MINR, MAXR);
-        // random location
-        int x = _rng.uniform(10,_width-10);
-        int y = _rng.uniform(10, _height-10);
-        // random velocity
-        float angle = -M_PI/2;
-        float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
-        int vx = speed*cos(angle);
-        int vy = speed*sin(angle);
+        initial_location();
         // colour
         unsigned char colr = _rng.uniform(0,255);
         unsigned char colg = _rng.uniform(0,255);
         unsigned char colb = _rng.uniform(0,255);
         // add to agents
-        _agents.push_back(cv::Scalar(x,y,vx,vy));
-        _aradius.push_back(r);
         _acolour.push_back(cv::Scalar(colr, colg, colb, 0));
     } // ni
 
     
 }
 
-
-
-std::vector<unsigned int>
-cw::Universe::nearby_agents(int ai, int radius)
+void 
+cw::Universe::initial_location(bool reset, int ai)
 {
-    //cv::Scalar pt = _agents[ai];
+    const float MINR = 6, MAXR = 20;
     
+    // random size
+    float r = _rng.uniform(MINR, MAXR);
+    // random location
+    int x = _rng.uniform(10,_width-10);
+    int y;
+    if (reset)
+        y = _height-r;
+    else
+        y = _rng.uniform(10, _height-10);
+    // random velocity
+    float angle = _rng.uniform(-M_PI+M_PI/4,-M_PI/4);
+    float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
+    int vx = speed*cos(angle);
+    int vy = speed*sin(angle);
+    // add to agents
+    if (reset) {
+        _agents[ai] = cv::Scalar(x,y,vx,vy);
+        _aradius[ai] = r;
+    }
+    else {
+        _agents.push_back(cv::Scalar(x,y,vx,vy));
+        _aradius.push_back(r);
+    }
     
-}
+} 

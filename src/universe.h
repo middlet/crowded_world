@@ -24,7 +24,7 @@ public:
     Universe();
     Universe(int na);
     
-    void animate();
+    void animate(int N);
     void draw();
     void update();
     

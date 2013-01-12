@@ -10,8 +10,8 @@
 int 
 main(void) 
 {
-	cw::Universe u(100);
-    u.animate();
+	cw::Universe u(50);
+    u.animate(200);
     
 	
 	return 0;

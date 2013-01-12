@@ -22,9 +22,9 @@ cw::Universe::Universe(int na)
 }
 
 void 
-cw::Universe::animate()
+cw::Universe::animate(int N)
 {
-    for (int di=0; di<100; di++)
+    for (int di=0; di<N; di++)
         draw();
 }
 
@@ -68,17 +68,16 @@ cw::Universe::update()
         if (_agents[ni][1]>_height-r || _agents[ni][1]<r) 
             respawn = true;
         // if we collide with another agent dont move this turn
-        if (overlap(x+dx, y+dy, r, ni))
-            continue;
-        
-        if (respawn) {
-            initial_location(true, ni);
-        }
-        else {
-            _agents[ni][0] += dx;
-            _agents[ni][1] += dy;
-            _agents[ni][2] = dx;
-            _agents[ni][3] = dy;
+        if (!overlap(x+dx, y+dy, r, ni)) {
+            if (respawn) {
+                initial_location(true, ni);
+            }
+            else {
+                _agents[ni][0] += dx;
+                _agents[ni][1] += dy;
+                _agents[ni][2] = dx;
+                _agents[ni][3] = dy;
+            }
         }
     }
 }

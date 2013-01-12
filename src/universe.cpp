@@ -10,171 +10,116 @@
 
 
 cw::Universe::Universe()
-    : _na(1)
+    : _na(1), _width(500), _height(500), _rng(0x53)
 {
-
-    create_agents();
-
+    Universe(_na);
 }
 
 cw::Universe::Universe(int na)
-    : _na(na)
+    : _na(na), _width(500), _height(500), _rng(0x53)
 {
-    create_agents();
-
-}
-
-
-void
-cw::Universe::display()
-{
-    cv::Mat im = _w.getBackground().clone();
-    // draw agents
-    for (int ai=0; ai<_na; ai++) {
-        cv::circle(im, _agents[ai].centre(), _agents[ai].radius(), 
-            _agents[ai].colour(), -1, -8);
-    }
-    // display result
-    cv::imshow("theworld", im);
-    cv::waitKey(250);
-   
-}
-
-void
-cw::Universe::animate()
-{
-    
-    cv::RNG rng(0x10);
-    unsigned int N = _agents.size();
-
-    display();
-    for (int it=0; it<100; it++) {
-
-        // move the agents
-        // create shuffled list
-        std::vector<unsigned int> order;
-        for (unsigned int oi=0; oi<N; oi++) {
-            order.push_back(oi);
-        }
-        for (unsigned int oi=0; oi<N; oi++) {
-            // swap 2 indexes around
-            unsigned int i = rng.uniform(0,N-1), j = rng.uniform(0,N-1);
-            unsigned int temp = order[i];
-            order[i] = order[j];
-            order[j] = temp;
-        }
-        move_agents(rng, order, N);
-        display();
-    } // for it
-    
-    
-}
-
-void
-cw::Universe::create_agents()
-{
-    cv::RNG rng(0x10);
-    for (int ai=0; ai<_na; ai++) {
-        int ntries = 0;
-        while (ntries<100) {
-            Agent a(rng, _w.width(), _w.height());
-            // check no overlap with existing agents
-            bool oktoadd = true;
-            for (unsigned int ai2=0; ai2<_agents.size(); ai2++) {
-                if (!intersect(a,_agents[ai2])) {
-                    oktoadd = false;
-                    break;
-                }
-            } // for ai2
-            if (oktoadd) {
-                _agents.push_back(a);
-                break;
-            }
-            else {
-                ntries++;
-            }
-        }
-    } // for ai    
-    std::cout << "created " << _agents.size() << " agents" << std::endl;
-}
-
-
-bool
-cw::Universe::intersect(cw::Agent &a1, cw::Agent &a2)
-{
-    int r1 = a1.radius(), r2 = a2.radius();
-    cv::Point c1 = a1.centre(), c2 = a2.centre();
-    // compute euclidean distance
-    float d = sqrt( float(c1.x-c2.x)*(c1.x-c2.x) + float(c1.y-c2.y)*(c1.y-c2.y) );
-    if (d>(r1+r2))
-        return true;
-    else
-        return false;
-}
-
-bool
-cw::Universe::collide(unsigned int N, unsigned int ai, cv::Point oxy, cv::Point nxy)
-{
-    // move agent
-    _agents[ai].setCentre(nxy);
-    // check there is no intersection after the move
-    bool overlap = true;
-    for (unsigned int ii=0; ii<N; ii++) {
-        if (ii!=ai) { // do not check if this is the agent
-            if (intersect(_agents[ai], _agents[ii])) {
-                overlap = false;
-                break;
-            }
-        }
-    }
-    // reset agent location
-    _agents[ai].setCentre(oxy);
-    
-    return overlap;
+    initialise();
 }
 
 void 
-cw::Universe::move_agents(cv::RNG &rng, std::vector<unsigned int> order, unsigned int N)
+cw::Universe::animate()
 {
-    for (unsigned int oi=0; oi<N; oi++) {
-        unsigned int ai = order[oi];
-        cv::Point xy = _agents[ai].centre();
-        // create candidate moves
-        std::vector<cv::Point> p(5, xy);
-        p[0].y -= 25;
-        p[1].y -= 25; p[1].x -= 25;
-        p[2].y -= 25; p[2].x += 25;
-        p[3].x -= 25;
-        p[4].x += 25;
-        
-        for (int pi=0; pi<5; pi++)
-            std::cout << p[pi] << " ";
-        std::cout << std::endl;
-        
-        // validate the new location
-        std::vector<bool> valid(5, true);
-        for (unsigned int pi=0; pi<p.size(); pi++) {
-            if (collide(oi, ai, xy, p[pi]))
-                valid[pi] = false;
-        }
-        for (int pi=0; pi<5; pi++)
-            std::cout << valid[pi] << " ";
-        std::cout << std::endl;
-        // choose new location from list random
-        int pos=-1;
-        for (unsigned int pi=0; pi<p.size(); pi++)
-            if (valid[pi]) {
-                pos = pi;
-                break;
-            }
-        if (pos>=0)
-            xy = p[pos];
+    for (int di=0; di<100; di++)
+        draw();
+}
+
+void
+cw::Universe::draw()
+{
+    cv::Mat bg(_height, _width, CV_8UC3, cv::Scalar(255,255,255));
+    for (int ni=0; ni<_na; ni++) {
+        cv::Point xy(_agents[ni][0], _agents[ni][1]);
+        cv::Scalar colour = _acolour[ni];
+        unsigned int r = _aradius[ni];
+        cv::circle(bg, xy, r, colour, -1, -8);
+    } // ni
+    cv::imshow("the world", bg);
+    update();
+    cv::waitKey(200);
     
-        if (xy.y<0)
-            xy.y = _w.height();
-        _agents[ai].setCentre(xy);
-        p.clear();
-        valid.clear();
+}
+
+void
+cw::Universe::update()
+{
+    for(int ni=0; ni<_na; ni++){
+        int dx = _agents[ni][2];
+        int dy = _agents[ni][3];
+        unsigned int r = _aradius[ni];
+        // if go out of view respawn at origin
+        bool respawn = false;
+        if (_agents[ni][0]>_width-r || _agents[ni][0]<r)
+            respawn = true;
+        if (_agents[ni][1]>_height-r || _agents[ni][1]<r) 
+            respawn = true;
+        // if hit another object reflect
+        //std::vector<unsigned int> nearby = close_agents(ni, 10);
+        
+        if (respawn) {
+            const float MINR = 6, MAXR = 20;
+            // random size
+            float r = _rng.uniform(MINR, MAXR);
+            // random location
+            int x = _rng.uniform(10,_width-10);
+            int y = _height-r;
+            // random velocity
+            float angle = -M_PI/2;
+            float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
+            int vx = speed*cos(angle);
+            int vy = speed*sin(angle);
+            _agents[ni] = cv::Scalar(x,y,vx,vy);
+            _aradius[ni] = r;
+        }
+        else {
+            _agents[ni][0] += dx;
+            _agents[ni][1] += dy;
+            _agents[ni][2] = dx;
+            _agents[ni][3] = dy;
+        }
     }
+}
+
+
+void
+cw::Universe::initialise()
+{
+    const float MINR = 6, MAXR = 20;
+    
+    for (int ni=0; ni<_na; ni++) {
+        // random size
+        float r = _rng.uniform(MINR, MAXR);
+        // random location
+        int x = _rng.uniform(10,_width-10);
+        int y = _rng.uniform(10, _height-10);
+        // random velocity
+        float angle = -M_PI/2;
+        float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
+        int vx = speed*cos(angle);
+        int vy = speed*sin(angle);
+        // colour
+        unsigned char colr = _rng.uniform(0,255);
+        unsigned char colg = _rng.uniform(0,255);
+        unsigned char colb = _rng.uniform(0,255);
+        // add to agents
+        _agents.push_back(cv::Scalar(x,y,vx,vy));
+        _aradius.push_back(r);
+        _acolour.push_back(cv::Scalar(colr, colg, colb, 0));
+    } // ni
+
+    
+}
+
+
+
+std::vector<unsigned int>
+cw::Universe::nearby_agents(int ai, int radius)
+{
+    //cv::Scalar pt = _agents[ai];
+    
     
 }

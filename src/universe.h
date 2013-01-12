@@ -24,19 +24,21 @@ public:
     Universe();
     Universe(int na);
     
-    void display();
     void animate();
-
-
-private:
-    World _w;
-    int _na; 
-    std::vector<Agent> _agents;
+    void draw();
+    void update();
     
-    void create_agents();
-    bool intersect(cw::Agent &a1, cw::Agent &a2);
-    bool collide(unsigned int N, unsigned int ai, cv::Point oxy, cv::Point nxy);
-    void move_agents(cv::RNG &rng, std::vector<unsigned int> order, unsigned int N);
+private:
+    int _na; 
+    int _width, _height; 
+    std::vector<cv::Scalar> _agents; // (x,y,v_x,v_y
+    std::vector<cv::Scalar> _acolour; // (r,g,b,a) of agents
+    std::vector<unsigned int> _aradius; // size of agent
+    cv::RNG _rng;
+    
+    void initialise();
+    std::vector<unsigned int> nearby_agents(int ai, int radius);
+
 
 }; // class Universe
 

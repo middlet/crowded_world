@@ -47,7 +47,17 @@ cw::Universe::draw()
 void
 cw::Universe::update()
 {
+    // shuffle the order of the agents
+    for (unsigned int oi=0; oi<(unsigned int)_na/2; oi++) {
+        int p1 = _rng.uniform(0,_na-1);
+        int p2 = _rng.uniform(0,_na-1);
+        int temp = _order[p1];
+        _order[p1] = _order[p2];
+        _order[p2] = temp;
+    }
     for(int ni=0; ni<_na; ni++){
+        int x = _agents[ni][0];
+        int y = _agents[ni][1];
         int dx = _agents[ni][2];
         int dy = _agents[ni][3];
         unsigned int r = _aradius[ni];
@@ -57,8 +67,9 @@ cw::Universe::update()
             respawn = true;
         if (_agents[ni][1]>_height-r || _agents[ni][1]<r) 
             respawn = true;
-        // if hit another object reflect
-        //std::vector<unsigned int> nearby = close_agents(ni, 10);
+        // if we collide with another agent dont move this turn
+        if (overlap(x+dx, y+dy, r, ni))
+            continue;
         
         if (respawn) {
             initial_location(true, ni);
@@ -86,7 +97,12 @@ cw::Universe::initialise()
         // add to agents
         _acolour.push_back(cv::Scalar(colr, colg, colb, 0));
     } // ni
-
+    // create ordered list for all the agents
+    for (unsigned int oi=0; oi<_agents.size(); oi++) {
+        _order.push_back(oi);
+    }
+    
+ 
     
 }
 
@@ -95,15 +111,20 @@ cw::Universe::initial_location(bool reset, int ai)
 {
     const float MINR = 6, MAXR = 20;
     
-    // random size
-    float r = _rng.uniform(MINR, MAXR);
-    // random location
-    int x = _rng.uniform(10,_width-10);
-    int y;
-    if (reset)
-        y = _height-r;
-    else
-        y = _rng.uniform(10, _height-10);
+    // random location and size
+    bool uniquelocation = false;
+    float r;
+    int x,y;
+    while (!uniquelocation) {
+        r = _rng.uniform(MINR, MAXR);
+        x = _rng.uniform(10,_width-10);
+        if (reset)
+            y = _height-r;
+        else
+            y = _rng.uniform(10, _height-10);
+        if (!overlap(x,y,r,ai))
+            uniquelocation = true;
+    }
     // random velocity
     float angle = _rng.uniform(-M_PI+M_PI/4,-M_PI/4);
     float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
@@ -120,3 +141,25 @@ cw::Universe::initial_location(bool reset, int ai)
     }
     
 } 
+
+// do this agent overlap with any other existing ones
+bool 
+cw::Universe::overlap(int x, int y, float r, unsigned int ai) 
+{
+    unsigned int N = _agents.size();
+
+    bool overlap = false;
+    for (unsigned int ni=0; ni<N; ni++) {
+        if (ni!=ai) {
+            cv::Scalar aa = _agents[ni];
+            int rr = _aradius[ni];
+            float d = sqrt( float(x-aa[0])*(x-aa[0]) + float(y-aa[1])*(y-aa[1]));
+            if (rr+r>d) {
+                overlap = true;
+                break;
+            }
+        }
+    }
+
+    return overlap;
+}   

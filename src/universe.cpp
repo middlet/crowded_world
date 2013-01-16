@@ -55,7 +55,8 @@ cw::Universe::update()
         _order[p1] = _order[p2];
         _order[p2] = temp;
     }
-    for(int ni=0; ni<_na; ni++){
+    for(int oi=0; oi<_na; oi++){
+        int ni = _order[oi];
         int x = _agents[ni][0];
         int y = _agents[ni][1];
         int dx = _agents[ni][2];
@@ -67,7 +68,7 @@ cw::Universe::update()
             respawn = true;
         if (_agents[ni][1]>_height-r || _agents[ni][1]<r) 
             respawn = true;
-        // if we collide with another agent dont move this turn
+        // if we collide with another agent stand still
         if (!overlap(x+dx, y+dy, r, ni)) {
             if (respawn) {
                 initial_location(true, ni);

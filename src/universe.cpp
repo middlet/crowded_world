@@ -83,9 +83,9 @@ cw::Universe::update()
         }
         else {  // agents stuck try new directions
             bool unstuck = false;
-            int ntries = 0, MAXTRIES = 20;
+            int ntries = 0, MAXTRIES = 50;
             while (!unstuck) {
-                float angle = _rng.uniform(-M_PI+M_PI/4,-M_PI/4);
+                float angle = _rng.uniform(-M_PI+M_PI/6,-M_PI/6);
                 float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
                 int vx = speed*cos(angle);
                 int vy = speed*sin(angle);
@@ -130,7 +130,7 @@ cw::Universe::initialise()
 void 
 cw::Universe::initial_location(bool reset, int ai)
 {
-    const float MINR = 6, MAXR = 20;
+    const float MINR = 6, MAXR = 10;
     
     // random location and size
     bool uniquelocation = false;

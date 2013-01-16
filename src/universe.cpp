@@ -68,7 +68,8 @@ cw::Universe::update()
             respawn = true;
         if (_agents[ni][1]>_height-r || _agents[ni][1]<r) 
             respawn = true;
-        // if we collide with another agent stand still
+            
+        // if we collide with another agent try different direction
         if (!overlap(x+dx, y+dy, r, ni)) {
             if (respawn) {
                 initial_location(true, ni);
@@ -79,6 +80,26 @@ cw::Universe::update()
                 _agents[ni][2] = dx;
                 _agents[ni][3] = dy;
             }
+        }
+        else {  // agents stuck try new directions
+            bool unstuck = false;
+            int ntries = 0, MAXTRIES = 20;
+            while (!unstuck) {
+                float angle = _rng.uniform(-M_PI+M_PI/4,-M_PI/4);
+                float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
+                int vx = speed*cos(angle);
+                int vy = speed*sin(angle);
+                if (!overlap(x+vx, y+vy, r, ni)) {
+                    _agents[ni][0] += vx;
+                    _agents[ni][1] += vy;
+                    _agents[ni][2] = vx;
+                    _agents[ni][3] = vy;
+                    break;
+                }
+                if (ntries>MAXTRIES)
+                    break;
+                ntries++;
+            } 
         }
     }
 }

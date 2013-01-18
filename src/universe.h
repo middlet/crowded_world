@@ -22,9 +22,9 @@ class Universe
 {
 public:
     Universe();
-    Universe(int na);
+    Universe(const int na);
     
-    void animate(int N);
+    void animate(const int N);
     void draw();
     void update();
     

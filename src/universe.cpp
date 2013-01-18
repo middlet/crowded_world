@@ -15,14 +15,14 @@ cw::Universe::Universe()
     Universe(_na);
 }
 
-cw::Universe::Universe(int na)
+cw::Universe::Universe(const int na)
     : _na(na), _width(500), _height(500), _rng(0x53)
 {
     initialise();
 }
 
 void 
-cw::Universe::animate(int N)
+cw::Universe::animate(const int N)
 {
     for (int di=0; di<N; di++)
         draw();
@@ -36,7 +36,7 @@ cw::Universe::draw()
         cv::Point xy(_agents[ni][0], _agents[ni][1]);
         cv::Scalar colour = _acolour[ni];
         unsigned int r = _aradius[ni];
-        cv::circle(bg, xy, r, colour, -1, -8);
+        cv::circle(bg, xy, r, cv::Scalar(0,255,0,0), -1, -8);
     } // ni
     cv::imshow("the world", bg);
     update();
@@ -89,12 +89,14 @@ cw::Universe::update()
                 float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
                 int vx = speed*cos(angle);
                 int vy = speed*sin(angle);
-                if (!overlap(x+vx, y+vy, r, ni)) {
-                    _agents[ni][0] += vx;
-                    _agents[ni][1] += vy;
-                    _agents[ni][2] = vx;
-                    _agents[ni][3] = vy;
-                    break;
+                if (vx!=0 and vy!=0) {
+                    if (!overlap(x+vx, y+vy, r, ni)) {
+                        _agents[ni][0] += vx;
+                        _agents[ni][1] += vy;
+                        _agents[ni][2] = vx;
+                        _agents[ni][3] = vy;
+                        break;
+                    }
                 }
                 if (ntries>MAXTRIES)
                     break;
@@ -146,11 +148,13 @@ cw::Universe::initial_location(bool reset, int ai)
         if (!overlap(x,y,r,ai))
             uniquelocation = true;
     }
-    // random velocity
+    // random velocity, make sure we always move
     float angle = _rng.uniform(-M_PI+M_PI/4,-M_PI/4);
     float speed = _rng.uniform(float(r)/8.0, 3*float(r)/4.0);
     int vx = speed*cos(angle);
     int vy = speed*sin(angle);
+    if (vx==0 && vy==0)
+        vy = -1;
     // add to agents
     if (reset) {
         _agents[ai] = cv::Scalar(x,y,vx,vy);

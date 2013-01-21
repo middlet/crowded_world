@@ -11,7 +11,7 @@
 #include <opencv2/core/core.hpp>
 
 namespace cw {
-
+    
 class Agent {
 public:
     Agent();
@@ -19,19 +19,23 @@ public:
     
     void arbitrage();
     
-    /*
-    cv::Point centre();
-    cv::Scalar colour();
-    int radius();
+    bool avoid();
+    bool move();
+    
+    const cv::Point centre();
+    const cv::Scalar colour();
+    const int radius();
 
-    void setCentre(cv::Point &xy);
-    void arbitrage();
-    */
+    //void setCentre(cv::Point &xy);
     
 private:
+    int _width;
+    int _height;
     cv::Point _xy;
     cv::Scalar _rgb;
     int _r;
+
+    void initialise();
 
 }; // class Agent
 

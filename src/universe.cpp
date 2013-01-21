@@ -10,17 +10,57 @@
 
 
 cw::Universe::Universe()
-    : _na(1), _width(500), _height(500), _rng(0x53)
-{
-    Universe(_na);
-}
-
-cw::Universe::Universe(const int na)
-    : _na(na), _width(500), _height(500), _rng(0x53)
+    : _na(1), _rng(0x53)
 {
     initialise();
 }
 
+cw::Universe::Universe(const int na)
+    : _na(na), _rng(0x53)
+{
+    
+    initialise();
+    
+}
+
+const int
+cw::Universe::nagents()
+{
+    return _na;
+}
+
+
+void
+cw::Universe::animate(const int N, bool display)
+{
+    for (int ni=0; ni<N; ++ni) {
+        // update agents
+        for (int ai=0; ai<_na; ++ai) {
+            _agents[ni].arbitrage();
+        }
+        // draw result
+        draw(display);
+    } // for ni
+    
+}
+
+void 
+cw::Universe::draw(bool display)
+{
+    
+    
+}
+
+void 
+cw::Universe::initialise()
+{
+    for (int ai=0; ai<_na; ai++) {
+        Agent a(_rng, _world.width(), _world.height());
+        _agents.push_back(a);
+    } // for ai    
+}
+
+/*
 void 
 cw::Universe::animate(const int N)
 {
@@ -188,3 +228,4 @@ cw::Universe::overlap(int x, int y, float r, unsigned int ai)
 
     return overlap;
 }   
+*/

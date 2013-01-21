@@ -11,7 +11,7 @@ int
 main(void) 
 {
 	cw::Universe u(50);
-    u.animate(200);
+    //u.animate(200);
     
 	
 	return 0;

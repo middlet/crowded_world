@@ -14,13 +14,19 @@ namespace cw {
 
 class Agent {
 public:
+    Agent();
     Agent(cv::RNG &rng, int width, int height);
     
+    void arbitrage();
+    
+    /*
     cv::Point centre();
     cv::Scalar colour();
     int radius();
 
     void setCentre(cv::Point &xy);
+    void arbitrage();
+    */
     
 private:
     cv::Point _xy;

@@ -12,6 +12,6 @@ add_executable(cworld main.cpp universe.cpp)
 target_link_libraries(cworld ${OpenCV_LIBS})
 
 # build libraries for linking with tests
-#add_library(world STATIC "world.cpp")
+add_library(world STATIC "world.cpp")
 add_library(universe STATIC "universe.cpp")
 #add_library(agent STATIC "agent.cpp")

@@ -18,15 +18,19 @@ public:
     World();
     ~World() {};
     
+    void add_obstacle(int x1, int y1, int x2, int y2);
+    
     int width();
     int height();
 
-    cv::Mat getBackground();
+    const cv::Mat environment();
+    const cv::Mat sensor();
 
 private:
     int _width;
     int _height;
     cv::Mat _world;
+    cv::Mat _sensor;
 }; // class World
 
 } // namespace cw

@@ -36,7 +36,7 @@ cw::Universe::draw()
         cv::Point xy(_agents[ni][0], _agents[ni][1]);
         cv::Scalar colour = _acolour[ni];
         unsigned int r = _aradius[ni];
-        cv::circle(bg, xy, r, cv::Scalar(0,255,0,0), -1, -8);
+        cv::circle(bg, xy, r, colour, -1, -8);
     } // ni
     cv::imshow("the world", bg);
     update();

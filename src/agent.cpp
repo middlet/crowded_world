@@ -8,7 +8,7 @@
 
 #include "agent.h"
 
-typedef bool (cw::Agent::*FuncPtr)(int *, int *);
+typedef bool (cw::Agent::*FuncPtr)(int *, int *, const cv::Mat);
 
 cw::Agent::Agent()
     : _width(100), _height(100)
@@ -23,32 +23,40 @@ cw::Agent::Agent(cv::RNG &rng, int width, int height)
 }
 
 void
-cw::Agent::arbitrage()
+cw::Agent::arbitrage(const cv::Mat sensor)
 {
     std::vector<FuncPtr> behaviours;
     //behaviours.push_back(&Agent::avoid);
     behaviours.push_back(&Agent::move);
     
     for (unsigned int bi=0; bi<behaviours.size(); bi++) {
-        int tran, rot;
-        std::cout << (this->*behaviours[bi])(&tran, &rot) << std::endl;
+        int dx, dy;
+        std::cout << (this->*behaviours[bi])(&dx, &dy, sensor) << std::endl;
         
     } // for bi
     
 }
 
+// move away from obstacles
 bool
-cw::Agent::avoid(int *translate, int *rotate)
+cw::Agent::avoid(int *dx, int *dy, const cv::Mat sensor)
 {
+    // if obstacle in front
+    // then try to move left or right
+    bool front = false;
+    for (int mx=0; mx<_r; mx++) {
+        
+    } // dx
+    
     return false;
 }
 
-
+// just move forward by default
 bool
-cw::Agent::move(int *translate, int *rotate)
+cw::Agent::move(int *dx, int *dy, const cv::Mat sensor)
 {
-    *translate = -_r;
-    *rotate = 0;
+    *dx = 0;
+    *dy = -_r;
     return true;
 }
 

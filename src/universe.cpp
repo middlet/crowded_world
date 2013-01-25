@@ -36,7 +36,7 @@ cw::Universe::animate(const int N, bool display)
     for (int ni=0; ni<N; ++ni) {
         // update agents
         for (int ai=0; ai<_na; ++ai) {
-            _agents[ni].arbitrage();
+            _agents[ni].arbitrage(_world.sensor());
         }
         // draw result
         draw(display);

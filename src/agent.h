@@ -17,10 +17,10 @@ public:
     Agent();
     Agent(cv::RNG &rng, int width, int height);
     
-    void arbitrage();
+    void arbitrage(const cv::Mat sensor);
     
-    bool avoid(int *translate, int *rotate);
-    bool move(int *translate, int *rotate);
+    bool avoid(int *dx, int *dy, const cv::Mat sensor);
+    bool move(int *dx, int *dy, const cv::Mat sensor);
     
     const cv::Point centre();
     const cv::Scalar colour();

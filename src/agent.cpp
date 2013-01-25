@@ -8,7 +8,7 @@
 
 #include "agent.h"
 
-typedef bool (cw::Agent::*FuncPtr)();
+typedef bool (cw::Agent::*FuncPtr)(int *, int *);
 
 cw::Agent::Agent()
     : _width(100), _height(100)
@@ -26,25 +26,29 @@ void
 cw::Agent::arbitrage()
 {
     std::vector<FuncPtr> behaviours;
-    behaviours.push_back(&Agent::avoid);
+    //behaviours.push_back(&Agent::avoid);
     behaviours.push_back(&Agent::move);
     
     for (unsigned int bi=0; bi<behaviours.size(); bi++) {
-        std::cout << (this->*behaviours[bi])() << std::endl;
+        int tran, rot;
+        std::cout << (this->*behaviours[bi])(&tran, &rot) << std::endl;
         
     } // for bi
     
 }
 
 bool
-cw::Agent::avoid()
+cw::Agent::avoid(int *translate, int *rotate)
 {
     return false;
 }
 
+
 bool
-cw::Agent::move()
+cw::Agent::move(int *translate, int *rotate)
 {
+    *translate = -_r;
+    *rotate = 0;
     return true;
 }
 
@@ -80,7 +84,7 @@ cw::Agent::initialise()
 }
 
 void
-cw::Agent::setCentre(const cv::Point &xy)
+cw::Agent::set_centre(const cv::Point &xy)
 {
     _xy.x = xy.x;
     _xy.y = xy.y;

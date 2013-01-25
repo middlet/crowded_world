@@ -19,14 +19,14 @@ public:
     
     void arbitrage();
     
-    bool avoid();
-    bool move();
+    bool avoid(int *translate, int *rotate);
+    bool move(int *translate, int *rotate);
     
     const cv::Point centre();
     const cv::Scalar colour();
     const int radius();
 
-    void setCentre(const cv::Point &xy);
+    void set_centre(const cv::Point &xy);
     
 private:
     int _width;

@@ -79,12 +79,9 @@ cw::Agent::initialise()
     _r = 10;
 }
 
-/*
-
 void
-cw::Agent::setCentre(cv::Point &xy)
+cw::Agent::setCentre(const cv::Point &xy)
 {
     _xy.x = xy.x;
     _xy.y = xy.y;
 }
-*/

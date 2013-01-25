@@ -26,7 +26,7 @@ public:
     const cv::Scalar colour();
     const int radius();
 
-    //void setCentre(cv::Point &xy);
+    void setCentre(const cv::Point &xy);
     
 private:
     int _width;

@@ -5,12 +5,14 @@
 */
 
 #include "../src/agent.h"
+#include "../src/world.h"
 #include "gtest/gtest.h"
 
 class AgentTest : public ::testing::Test {
 protected:
     cw::Agent _a;
-}; // class WorldTest
+    cw::World _w;
+}; // class AgentTest
 
 // check the default work constructor is ok
 TEST_F(AgentTest, DefaultConstructor_OK) {
@@ -20,7 +22,15 @@ TEST_F(AgentTest, DefaultConstructor_OK) {
     EXPECT_EQ(_a.radius(), 10);
 }
 
+TEST_F(AgentTest, SetLocation_OK) {
+    _a.setCentre(cv::Point(100,100));
+    cv::Point xy = _a.centre();
+    EXPECT_EQ(xy.x, 100);
+    EXPECT_EQ(xy.y, 100);
+}
+
 TEST_F(AgentTest, ArbitrageOK) {
+    _w.add_obstacle(100,100,300,300);
     _a.arbitrage();
     EXPECT_TRUE(false);
 }

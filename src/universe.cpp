@@ -10,16 +10,16 @@
 
 
 cw::Universe::Universe()
-    : _na(1), _rng(0x53)
+    : _na(1), _world(1), _rng(0x53)
 {
-    initialise();
+    //initialise();
 }
 
 cw::Universe::Universe(const int na)
-    : _na(na), _rng(0x53)
+    : _na(na), _world(na), _rng(0x53)
 {
     
-    initialise();
+    //initialise();
     
 }
 
@@ -33,7 +33,7 @@ cw::Universe::nagents()
 void
 cw::Universe::animate(const int N, bool display)
 {
-    for (int ni=0; ni<N; ++ni) {
+    /*for (int ni=0; ni<N; ++ni) {
         // update agents
         for (int ai=0; ai<_na; ++ai) {
             _agents[ni].arbitrage(_world.sensor());
@@ -41,7 +41,7 @@ cw::Universe::animate(const int N, bool display)
         // draw result
         draw(display);
     } // for ni
-    
+	*/
 }
 
 void 
@@ -54,10 +54,11 @@ cw::Universe::draw(bool display)
 void 
 cw::Universe::initialise()
 {
-    for (int ai=0; ai<_na; ai++) {
-        Agent a(_rng, _world.width(), _world.height());
+    /*for (int ai=0; ai<_na; ai++) {
+        Agent a(_rng);
         _agents.push_back(a);
-    } // for ai    
+    } // for ai
+    */    
 }
 
 /*

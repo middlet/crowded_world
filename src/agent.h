@@ -15,27 +15,21 @@ namespace cw {
 class Agent {
 public:
     Agent();
-    Agent(cv::RNG &rng, int width, int height);
     
     void arbitrage(const cv::Mat sensor);
     
-    bool avoid(int *dx, int *dy, const cv::Mat sensor);
-    bool move(int *dx, int *dy, const cv::Mat sensor);
+    bool avoid(const cv::Mat sensor);
+    bool move(const cv::Mat sensor);
     
-    const cv::Point centre();
+    const cv::Point motion();
     const cv::Scalar colour();
     const int radius();
 
-    void set_centre(const cv::Point &xy);
     
 private:
-    int _width;
-    int _height;
-    cv::Point _xy;
+    cv::Point _dxy;
     cv::Scalar _rgb;
     int _r;
-
-    void initialise();
 
 }; // class Agent
 

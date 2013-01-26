@@ -12,10 +12,30 @@ protected:
     cw::World _w;
 }; // class WorldTest
 
-// check the default work constructor is ok
+// check the default constructor is ok
 TEST_F(WorldTest, DefaultConstructor_OK) {
     EXPECT_EQ(500, _w.height());
     EXPECT_EQ(500, _w.width());
+    EXPECT_EQ(1, _w.nagents());
+}
+
+// check the constructor is ok
+TEST_F(WorldTest, Constructor_OK) {
+	_w = cw::World(10);
+    EXPECT_EQ(500, _w.height());
+    EXPECT_EQ(500, _w.width());
+    EXPECT_EQ(10, _w.nagents());
+}
+
+TEST_F(WorldTest, GetLocation_OK) {
+	cv::Point xy1 = _w.get_location(0);
+	cv::Point xy2 = _w.get_location(-1);
+	//cv::Point xy3 = _w.get_location(1);
+	//cv::Point xy3 = _w.get_location(2);
+	EXPECT_EQ(xy1.x, 0);
+	EXPECT_EQ(xy1.y, 0);
+	
+	
 }
 
 // check the correct environment

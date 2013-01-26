@@ -16,40 +16,19 @@ protected:
 
 // check the default work constructor is ok
 TEST_F(AgentTest, DefaultConstructor_OK) {
-    cv::Point xy = _a.centre();
-    EXPECT_EQ(xy.x, 50);
-    EXPECT_EQ(xy.y, 50);
+    cv::Point xy = _a.motion();
+    EXPECT_EQ(xy.x, 0);
+    EXPECT_EQ(xy.y, 0);
     EXPECT_EQ(_a.radius(), 10);
 }
 
-TEST_F(AgentTest, SetLocation_OK) {
-    _a.set_centre(cv::Point(100,100));
-    cv::Point xy = _a.centre();
-    EXPECT_EQ(xy.x, 100);
-    EXPECT_EQ(xy.y, 100);
-}
 
 TEST_F(AgentTest, Move_OK) {
-    // default move is to just go forward by the radius
-    _a.set_centre(cv::Point(100,100));
-    int dx, dy;
-    bool result = _a.move(&dx, &dy, _w.sensor());
-    EXPECT_TRUE(result);
-    EXPECT_EQ(dy, -10);
-    EXPECT_EQ(dx, 0);  
+    EXPECT_TRUE(false);
 }
 
 TEST_F(AgentTest, Avoid_OK) {
-    // will turn away from the obstacle
-    // put agent in front of obstacle
-    _w.add_obstacle(100,100,300,300);
-    _a.set_centre(cv::Point(200,95));
-    int dx, dy;
-    bool result = _a.avoid(&dx, &dy, _w.sensor());
-    EXPECT_FALSE(result);
-    EXPECT_EQ(dx, -10);
-    EXPECT_EQ(dy, 0);
-    
+	EXPECT_TRUE(false);
 }
 
 

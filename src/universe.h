@@ -34,7 +34,6 @@ public:
 private:
     int _na;
     World _world;
-    std::vector<Agent> _agents; 
     //int _width, _height;
     //std::vector<cv::Scalar> _agents; // (x,y,v_x,v_y
     //std::vector<cv::Scalar> _acolour; // (r,g,b,a) of agents

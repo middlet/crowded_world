@@ -28,27 +28,41 @@ TEST_F(WorldTest, Constructor_OK) {
 }
 
 TEST_F(WorldTest, GetLocation_OK) {
-	cv::Point xy1 = _w.get_location(0);
-	cv::Point xy2 = _w.get_location(-1);
-	//cv::Point xy3 = _w.get_location(1);
-	//cv::Point xy3 = _w.get_location(2);
-	EXPECT_EQ(xy1.x, 0);
-	EXPECT_EQ(xy1.y, 0);
-	
-	
+	cv::Point xy = _w.get_location(0);
+	EXPECT_EQ(xy.x, 0);
+	EXPECT_EQ(xy.y, 0);
+	try {
+		xy = _w.get_location(-1);
+		xy = _w.get_location(1);
+		xy = _w.get_location(2);
+		ADD_FAILURE() << "should not get here";
+	}
+	catch (std::runtime_error &e) {
+		std::string s = e.what();
+		EXPECT_EQ(s, "no such agent");
+	}
 }
 
-// check the correct environment
+TEST_F(WorldTest, SetLocation_OK) {
+	_w.set_location(0, 100, 100);
+	cv::Point xy = _w.get_location(0);
+	EXPECT_EQ(xy.x, 100);
+	EXPECT_EQ(xy.y, 100);
+	try {
+		_w.set_location(0, -1, 100);
+		_w.set_location(-1, 0, 0);
+	}
+	catch (std::runtime_error &e) {
+		std::string s = e.what();
+		EXPECT_EQ(s, "location is outside of the world");
+	}
+}
+
+// check the correct enironment (this is the world plus obstacles)
 TEST_F(WorldTest, Environment_OK) {    
     cv::Mat img = _w.environment();
-    cv::Vec3b e1 = img.at<cv::Vec3b>(0, 0);
-    cv::Vec3b e2 = img.at<cv::Vec3b>(499, 499);
-    EXPECT_EQ(e1[0], 255);
-    EXPECT_EQ(e1[1], 255);
-    EXPECT_EQ(e1[2], 255);
-    EXPECT_EQ(e2[0], 255);
-    EXPECT_EQ(e2[1], 255);
-    EXPECT_EQ(e2[2], 255);
+    EXPECT_EQ(img.at<uchar>(0,0), 0);
+    EXPECT_EQ(img.at<uchar>(499,499), 0);
 }
 
 // check the correct sensor values
@@ -61,27 +75,11 @@ TEST_F(WorldTest, Sensor_OK) {
 // check obstacle in environment 
 TEST_F(WorldTest, Obstacle_OK) {
     _w.add_obstacle(100,100,300,300);
-    // check the world
     cv::Mat img = _w.environment();
-    cv::Vec3b e1 = img.at<cv::Vec3b>(100, 100);
-    EXPECT_EQ(e1[0], 0);
-    EXPECT_EQ(e1[1], 0);
-    EXPECT_EQ(e1[2], 0);
-    e1 = img.at<cv::Vec3b>(300, 300);
-    EXPECT_EQ(e1[0], 0);
-    EXPECT_EQ(e1[1], 0);
-    EXPECT_EQ(e1[2], 0);
-    e1 = img.at<cv::Vec3b>(200, 300);
-    EXPECT_EQ(e1[0], 0);
-    EXPECT_EQ(e1[1], 0);
-    EXPECT_EQ(e1[2], 0);
-    // check the sensor
-    cv::Mat snr = _w.sensor();
-    EXPECT_EQ(snr.at<uchar>(100,100), 1);
-    EXPECT_EQ(snr.at<uchar>(300,300), 1);
-    EXPECT_EQ(snr.at<uchar>(100,200), 1);
-    
-    
+    EXPECT_EQ(img.at<uchar>(100,100), 1);
+    EXPECT_EQ(img.at<uchar>(300,300), 1);
+    EXPECT_EQ(img.at<uchar>(200,200), 1);
+    EXPECT_EQ(img.at<uchar>(99,100), 0);
 }
 
 int

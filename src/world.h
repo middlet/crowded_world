@@ -9,7 +9,8 @@
 #define WORLD_H
 
 #include <opencv2/core/core.hpp>
-
+#include <exception>
+#include <stdexcept>
 #include "agent.h"
 
 namespace cw {
@@ -27,6 +28,7 @@ public:
     const int nagents();
     
     const cv::Point get_location(int ai);
+    void set_location(int ai, int x1, int y1);
 
     const cv::Mat environment();
     const cv::Mat sensor();

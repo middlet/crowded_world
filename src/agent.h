@@ -16,10 +16,10 @@ class Agent {
 public:
     Agent();
     
-    void arbitrage(const cv::Mat sensor);
+    void arbitrage(const cv::Vec3i sensor);
     
-    bool avoid(const cv::Mat sensor);
-    bool move(const cv::Mat sensor);
+    bool avoid(const cv::Vec3i sensor);
+    bool move(const cv::Vec3i sensor);
     
     const cv::Point motion();
     const cv::Scalar colour();

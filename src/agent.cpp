@@ -8,7 +8,7 @@
 
 #include "agent.h"
 
-typedef bool (cw::Agent::*FuncPtr)(const cv::Mat);
+typedef bool (cw::Agent::*FuncPtr)(const cv::Vec3i);
 
 cw::Agent::Agent()
 	: _dxy(cv::Point(0, 0)), _rgb(cv::Scalar(0, 255, 0, 0)), _r(10)
@@ -18,7 +18,7 @@ cw::Agent::Agent()
 
 
 void
-cw::Agent::arbitrage(const cv::Mat sensor)
+cw::Agent::arbitrage(const cv::Vec3i sensor)
 {
     std::vector<FuncPtr> behaviours;
     behaviours.push_back(&Agent::avoid);
@@ -32,7 +32,7 @@ cw::Agent::arbitrage(const cv::Mat sensor)
 
 // move away from obstacles
 bool
-cw::Agent::avoid(const cv::Mat sensor)
+cw::Agent::avoid(const cv::Vec3i sensor)
 {
     // if obstacle in front
     // then try to move left or right
@@ -42,8 +42,10 @@ cw::Agent::avoid(const cv::Mat sensor)
 
 // just move forward by default
 bool
-cw::Agent::move(const cv::Mat sensor)
+cw::Agent::move(const cv::Vec3i sensor)
 {
+    _dxy.x = 0;
+    _dxy.y = -_r; 
     return true;
 }
 

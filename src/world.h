@@ -31,7 +31,7 @@ public:
     void set_location(int ai, int x1, int y1);
 
     const cv::Mat environment();
-    const cv::Mat sensor();
+    const cv::Vec3i sensor(int ai);
 
 private:
 	int _na;

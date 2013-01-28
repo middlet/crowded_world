@@ -21,12 +21,11 @@ void
 cw::Agent::arbitrage(const cv::Mat sensor)
 {
     std::vector<FuncPtr> behaviours;
-    //behaviours.push_back(&Agent::avoid);
+    behaviours.push_back(&Agent::avoid);
     behaviours.push_back(&Agent::move);
     
     for (unsigned int bi=0; bi<behaviours.size(); bi++) {
         std::cout << (this->*behaviours[bi])(sensor) << std::endl;
-        
     } // for bi
     
 }

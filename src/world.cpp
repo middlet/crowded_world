@@ -79,8 +79,38 @@ cw::World::environment()
     return _world;
 }
 
-const cv::Mat
-cw::World::sensor()
+const cv::Vec3i
+cw::World::sensor(int ai)
 {
-    return _sensor;
+    if (ai<0 || ai>=_na)
+		throw std::runtime_error("no such agent");
+    
+    cv::Point xy = _alocs[ai];
+    
+    // return the distance to objects in each of 3 directions
+    // if no object distance = 0
+    int front = 0;
+    for (int yi=xy.y; yi>=0; --yi) {
+        if (_world.at<uchar>(xy.x,yi)>0) {
+            front = xy.y-yi;
+            break;
+        }
+    }
+    int left = 0;
+    for (int xi=xy.x; xi>=0; --xi) {
+        if (_world.at<uchar>(xi,xy.y)>0) {
+            left = xy.x-xi;
+            break;
+        }
+    }
+    int right = 0;
+    for (int xi=xy.x; xi<_width; ++xi) {
+        if (_world.at<uchar>(xi,xy.y)>0) {
+            right = xi-xy.x;
+            break;
+        }
+    }
+    
+    
+    return cv::Vec3i(front, left, right);
 }

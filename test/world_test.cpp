@@ -66,10 +66,21 @@ TEST_F(WorldTest, Environment_OK) {
 }
 
 // check the correct sensor values
-TEST_F(WorldTest, Sensor_OK) {    
-    cv::Mat snr = _w.sensor();
-    EXPECT_EQ(snr.at<uchar>(0,0), 0);
-    EXPECT_EQ(snr.at<uchar>(499,499), 0);
+TEST_F(WorldTest, Sensor_OK) { 
+    _w.add_obstacle(100, 100, 300, 300); 
+    // put agent just below the obstacle
+    _w.set_location(0, 200, 302);  
+    EXPECT_EQ(_w.sensor(0), cv::Vec3i(2, 0, 0));
+    // put agent to the right of the object
+    _w.set_location(0, 320, 200);
+    EXPECT_EQ(_w.sensor(0), cv::Vec3i(0, 20, 0));
+    // put agent to the left of the object
+    _w.set_location(0, 95, 200);
+    EXPECT_EQ(_w.sensor(0), cv::Vec3i(0, 0, 5));
+    // put agent nowhere near object
+    _w.set_location(0, 50, 50);
+    EXPECT_EQ(_w.sensor(0), cv::Vec3i(0, 0, 0));
+    
 }
 
 // check obstacle in environment 

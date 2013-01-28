@@ -33,8 +33,8 @@ TEST_F(AgentTest, Avoid_OK) {
 
 
 TEST_F(AgentTest, ArbitrageOK) {
-    _w.add_obstacle(100,100,300,300);
-    _a.arbitrage(_w.sensor());
+    //_w.add_obstacle(100,100,300,300);
+    //_a.arbitrage(_w.sensor());
     EXPECT_TRUE(false);
 }
 

@@ -25,12 +25,16 @@ cw::Agent::arbitrage(const cv::Vec3i sensor)
     behaviours.push_back(&Agent::move);
     
     for (unsigned int bi=0; bi<behaviours.size(); bi++) {
-        std::cout << (this->*behaviours[bi])(sensor) << std::endl;
+		bool result = (this->*behaviours[bi])(sensor);
+		if (result) // stop if we have a valid behaviour
+			break; 
+        //std::cout << (this->*behaviours[bi])(sensor) << std::endl;
     } // for bi
     
 }
 
 // move away from obstacles
+// TODO : split into multiple behaviours???
 bool
 cw::Agent::avoid(const cv::Vec3i sensor)
 {
@@ -54,7 +58,7 @@ cw::Agent::avoid(const cv::Vec3i sensor)
     // if we make it here we cannot move
     _dxy.x = 0;
     _dxy.y = 0;
-    return false;
+    return true;
 }
 
 // just move forward by default

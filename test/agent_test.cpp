@@ -30,8 +30,24 @@ TEST_F(AgentTest, Move_OK) {
     EXPECT_EQ(_a.motion(), cv::Point(0, -10));
 }
 
-TEST_F(AgentTest, Avoid_OK) {
-	EXPECT_TRUE(false);
+TEST_F(AgentTest, Avoid_None_OK) {
+	// no obstacle so dont avoid
+	bool result = _a.avoid(cv::Vec3i(0, 0, 0));
+	EXPECT_FALSE(result);
+}
+
+TEST_F(AgentTest, Avoid_Front_OK) {
+	// obstacle in front so move left
+	bool result = _a.avoid(cv::Vec3i(1, 0, 0));
+	EXPECT_TRUE(result);
+	EXPECT_EQ(_a.motion(), cv::Point(-10, 0));
+}
+
+TEST_F(AgentTest, Avoid_FrontLeft_OK) {
+	// obstacle front and left so go right
+	bool result = _a.avoid(cv::Vec3i(1, 1, 0));
+	EXPECT_TRUE(result);
+	EXPECT_EQ(_a.motion(), cv::Point(10, 0));
 }
 
 

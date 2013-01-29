@@ -36,7 +36,24 @@ cw::Agent::avoid(const cv::Vec3i sensor)
 {
     // if obstacle in front
     // then try to move left or right
+    if (sensor[0]==0) // no obstacle
+		return false;
+		
+	if (sensor[1]==0 || sensor[1]>_r) { // can move left
+		_dxy.x = -_r;
+		_dxy.y = 0;
+		return true;
+	}
+	
+	if (sensor[2]==0 || sensor[2]>_r) { // can move right
+		_dxy.x = _r;
+		_dxy.y = 0;
+		return true;
+	}
     
+    // if we make it here we cannot move
+    _dxy.x = 0;
+    _dxy.y = 0;
     return false;
 }
 

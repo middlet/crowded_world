@@ -5,13 +5,11 @@
 */
 
 #include "../src/agent.h"
-#include "../src/world.h"
 #include "gtest/gtest.h"
 
 class AgentTest : public ::testing::Test {
 protected:
     cw::Agent _a;
-    cw::World _w;
 }; // class AgentTest
 
 // check the default work constructor is ok

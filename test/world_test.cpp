@@ -93,6 +93,16 @@ TEST_F(WorldTest, Obstacle_OK) {
     EXPECT_EQ(img.at<uchar>(99,100), 0);
 }
 
+// check update is moving to correct location
+TEST_F(WorldTest, Update_SingleAgent) {
+    _w.add_obstacle(100,100,300,300);
+    // we cant move into obstacle
+    _w.set_location(0, 200, 302);
+    _w.update();
+    EXPECT_EQ(_w.get_location(0), cv::Point(200, 302));
+    // no obstacle
+}
+
 int
 main(int argc, char **argv)
 {

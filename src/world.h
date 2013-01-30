@@ -32,6 +32,8 @@ public:
 
     const cv::Mat environment();
     const cv::Vec3i sensor(int ai);
+    
+    void update();
 
 private:
 	int _na;

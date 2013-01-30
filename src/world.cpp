@@ -11,6 +11,7 @@ cw::World::World()
     _world(_height, _width, CV_8UC1, cv::Scalar(0)),
     _sensor(_height, _width, CV_8UC1, cv::Scalar(0))
 {
+    _agents.push_back(Agent());
 	_alocs.push_back(cv::Point(0,0));
 }
 
@@ -113,4 +114,47 @@ cw::World::sensor(int ai)
     
     
     return cv::Vec3i(front, left, right);
+}
+
+void
+cw::World::update() {
+    for (int ai=0; ai<_na; ++ai) {
+        cv::Mat cstate = _world.clone();
+        // current location
+        cv::Point xy = _alocs[ai];
+        int r = _agents[ai].radius();
+        // add existing agent locations
+        for (int ai2=0; ai2<_na; ++ai2) {
+            cv::Point xy2 = _alocs[ai2];
+            int r2 = _agents[ai2].radius();
+            cv::circle(cstate, xy2, r2, cv::Scalar(2), -1, -8);
+        }
+        // proposed motion
+        cv::Point dxy = _agents[ai].motion();
+        // check we can move there by checking
+        int sx, ex;
+        if (dxy.x<0) {
+            sx = xy.x+r;
+            ex = xy.x+dxy.x-r;
+        }
+        else {
+            sx = xy.x-r;
+            ex = xy.x+dxy.x+r;
+        }
+        bool canmove = true;
+        for (int yi=xy.y-r; yi<=xy.y+dxy.y+r; ++yi) {
+            for (int xi=sx; xi<=ex; ++xi) {
+                if (cstate.at<uchar>(xi,yi)>0) {
+                    // we cannot do this move
+                    canmove = false;
+                    break;
+                }
+            } // for xi
+        } // for yi
+        // update the agent location if it could move
+        if (canmove) {
+            _alocs[ai] = cv::Point(xy.x+dxy.x, xy.y+dxy.y);
+        }
+    } // for ai
+    
 }

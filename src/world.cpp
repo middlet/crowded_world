@@ -20,8 +20,10 @@ cw::World::World(int na)
     _world(_height, _width, CV_8UC1, cv::Scalar(0)),
     _sensor(_height, _width, CV_8UC1, cv::Scalar(0))
 {
-	for (int ni=0; ni<_na; ++ni)
+	for (int ni=0; ni<_na; ++ni) {
 		_alocs.push_back(cv::Point(0,0));
+        _agents.push_back(Agent());
+    }
 }
 
 void 
@@ -48,7 +50,7 @@ cw::World::height()
 const int
 cw::World::nagents()
 {
-	return _na;
+	return _agents.size();
 }
 
 const cv::Point 

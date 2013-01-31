@@ -66,5 +66,6 @@ cw::Universe::draw(bool display)
         cv::circle(bg, xy, r, colour, -1, -8);
     } // for ai
     cv::imshow("the world", bg);
+    cv::waitKey(200);
     
 }

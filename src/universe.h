@@ -25,7 +25,7 @@ public:
     Universe(const int na);
     
     const int nagents();
-    void animate(const int N, bool display=false);
+    void animate(const int N, bool display=true);
     void draw(bool display);
 
     //void draw();

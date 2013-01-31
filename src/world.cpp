@@ -11,6 +11,9 @@ cw::World::World()
     _world(_height, _width, CV_8UC1, cv::Scalar(0)),
     _sensor(_height, _width, CV_8UC1, cv::Scalar(0))
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     _agents.push_back(Agent());
 	_alocs.push_back(cv::Point(0,0));
 }
@@ -20,6 +23,9 @@ cw::World::World(int na)
     _world(_height, _width, CV_8UC1, cv::Scalar(0)),
     _sensor(_height, _width, CV_8UC1, cv::Scalar(0))
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	for (int ni=0; ni<_na; ++ni) {
 		_alocs.push_back(cv::Point(0,0));
         _agents.push_back(Agent());
@@ -29,6 +35,7 @@ cw::World::World(int na)
 void 
 cw::World::add_obstacle(int x1, int y1, int x2, int y2)
 {
+
     // draw a rectangle on the environment
     cv::rectangle(_world, cv::Point(x1,y1), cv::Point(x2,y2), 
         cv::Scalar(1), -1);    
@@ -38,23 +45,26 @@ cw::World::add_obstacle(int x1, int y1, int x2, int y2)
 const int
 cw::World::width()
 {
+
     return _width;
 }
 
 const int
 cw::World::height()
 {
+
     return _height;
 }
 
 const int
 cw::World::nagents()
 {
+
 	return _agents.size();
 }
 
 const cv::Point 
-cw::World::get_location(int ai)
+cw::World::location(int ai)
 {
 	if (ai<0 || ai>=_na) {
 		throw std::runtime_error("no such agent");
@@ -75,6 +85,23 @@ cw::World::set_location(int ai, int x1, int y1)
 	_alocs[ai] = cv::Point(x1, y1);
 }
 
+const cv::Scalar
+cw::World::colour(int ai) {
+    if (ai<0 || ai>=_na) {
+		throw std::runtime_error("no such agent");
+	}
+    
+    return _agents[ai].colour();
+}
+
+const int
+cw::World::radius(int ai) {
+    if (ai<0 || ai>=_na) {
+		throw std::runtime_error("no such agent");
+	}
+    
+    return _agents[ai].radius();
+}
 
 const cv::Mat
 cw::World::environment()
@@ -85,6 +112,9 @@ cw::World::environment()
 const cv::Vec3i
 cw::World::sensor(int ai)
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     if (ai<0 || ai>=_na)
 		throw std::runtime_error("no such agent");
     
@@ -120,6 +150,9 @@ cw::World::sensor(int ai)
 
 void
 cw::World::update() {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     for (int ai=0; ai<_na; ++ai) {
         cv::Mat cstate = _world.clone();
         // current location
@@ -146,10 +179,12 @@ cw::World::update() {
         bool canmove = true;
         for (int yi=xy.y-r; yi<=xy.y+dxy.y+r; ++yi) {
             for (int xi=sx; xi<=ex; ++xi) {
-                if (cstate.at<uchar>(xi,yi)>0) {
-                    // we cannot do this move
-                    canmove = false;
-                    break;
+                if (xi>=0 && xi<_width && yi>=0 && yi<_height) {
+                    if (cstate.at<uchar>(xi,yi)>0) {
+                        // we cannot do this move
+                        canmove = false;
+                        break;
+                    }
                 }
             } // for xi
         } // for yi

@@ -14,6 +14,9 @@ protected:
 
 // check the default constructor is ok
 TEST_F(WorldTest, DefaultConstructor_OK) {
+#ifdef DEBUG
+   std::cout << "arrrgh" << std::endl;
+#endif
     EXPECT_EQ(500, _w.height());
     EXPECT_EQ(500, _w.width());
     EXPECT_EQ(1, _w.nagents());
@@ -27,15 +30,15 @@ TEST_F(WorldTest, Constructor_OK) {
     EXPECT_EQ(10, _w.nagents());
 }
 
-TEST_F(WorldTest, GetLocation_OK) {
-	cv::Point xy = _w.get_location(0);
+TEST_F(WorldTest, Location) {
+	cv::Point xy = _w.location(0);
 	EXPECT_EQ(xy.x, 0);
 	EXPECT_EQ(xy.y, 0);
 	try {
-		xy = _w.get_location(-1);
-		xy = _w.get_location(1);
-		xy = _w.get_location(2);
-		ADD_FAILURE() << "should not get here";
+		xy = _w.location(-1);
+		xy = _w.location(1);
+		xy = _w.location(2);
+		ADD_FAILURE() << "Location : should not get here";
 	}
 	catch (std::runtime_error &e) {
 		std::string s = e.what();
@@ -43,9 +46,9 @@ TEST_F(WorldTest, GetLocation_OK) {
 	}
 }
 
-TEST_F(WorldTest, SetLocation_OK) {
+TEST_F(WorldTest, SetLocation) {
 	_w.set_location(0, 100, 100);
-	cv::Point xy = _w.get_location(0);
+	cv::Point xy = _w.location(0);
 	EXPECT_EQ(xy.x, 100);
 	EXPECT_EQ(xy.y, 100);
 	try {
@@ -58,15 +61,46 @@ TEST_F(WorldTest, SetLocation_OK) {
 	}
 }
 
+
+TEST_F(WorldTest, Colour) {
+	cv::Scalar rgb = _w.colour(0);
+	EXPECT_EQ(rgb, cv::Scalar(0,255,0,0));
+	try {
+		rgb = _w.colour(-1);
+		rgb = _w.colour(1);
+		rgb = _w.colour(2);
+		ADD_FAILURE() << "Colour : should not get here";
+	}
+	catch (std::runtime_error &e) {
+		std::string s = e.what();
+		EXPECT_EQ(s, "no such agent");
+	}
+}
+
+TEST_F(WorldTest, Radius) {
+	int r = _w.radius(0);
+	EXPECT_EQ(r, 10);
+	try {
+		r = _w.radius(-1);
+		r = _w.radius(1);
+		r = _w.radius(2);
+		ADD_FAILURE() << "Radius : should not get here";
+	}
+	catch (std::runtime_error &e) {
+		std::string s = e.what();
+		EXPECT_EQ(s, "no such agent");
+	}
+}
+
 // check the correct enironment (this is the world plus obstacles)
-TEST_F(WorldTest, Environment_OK) {    
+TEST_F(WorldTest, Environment) {    
     cv::Mat img = _w.environment();
     EXPECT_EQ(img.at<uchar>(0,0), 0);
     EXPECT_EQ(img.at<uchar>(499,499), 0);
 }
 
 // check the correct sensor values
-TEST_F(WorldTest, Sensor_OK) { 
+TEST_F(WorldTest, Sensor) { 
     _w.add_obstacle(100, 100, 300, 300); 
     // put agent just below the obstacle
     _w.set_location(0, 200, 302);  
@@ -84,7 +118,7 @@ TEST_F(WorldTest, Sensor_OK) {
 }
 
 // check obstacle in environment 
-TEST_F(WorldTest, Obstacle_OK) {
+TEST_F(WorldTest, Obstacle) {
     _w.add_obstacle(100,100,300,300);
     cv::Mat img = _w.environment();
     EXPECT_EQ(img.at<uchar>(100,100), 1);
@@ -99,7 +133,7 @@ TEST_F(WorldTest, Update_SingleAgent) {
     // we cant move into obstacle
     _w.set_location(0, 200, 302);
     _w.update();
-    EXPECT_EQ(_w.get_location(0), cv::Point(200, 302));
+    EXPECT_EQ(_w.location(0), cv::Point(200, 302));
     // no obstacle
 }
 

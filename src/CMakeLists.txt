@@ -7,6 +7,7 @@ find_package( OpenCV REQUIRED )
 include_directories(. ${COMMON_INCLUDES})
 
 # include opencv
+add_definitions(-DDEBUG)
 add_executable(cworld main.cpp world.cpp universe.cpp agent.cpp)
 target_link_libraries(cworld ${OpenCV_LIBS})
 

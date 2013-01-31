@@ -11,6 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 #include "agent.h"
 
 namespace cw {
@@ -27,8 +28,11 @@ public:
     const int height();
     const int nagents();
     
-    const cv::Point get_location(int ai);
+    const cv::Point location(int ai);
     void set_location(int ai, int x1, int y1);
+    
+    const cv::Scalar colour(int ai);
+    const int radius(int ai);
 
     const cv::Mat environment();
     const cv::Vec3i sensor(int ai);

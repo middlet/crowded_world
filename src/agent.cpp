@@ -13,13 +13,18 @@ typedef bool (cw::Agent::*FuncPtr)(const cv::Vec3i);
 cw::Agent::Agent()
 	: _dxy(cv::Point(0, 0)), _rgb(cv::Scalar(0, 255, 0, 0)), _r(10)
 {
-
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 }
 
 
 void
 cw::Agent::arbitrage(const cv::Vec3i sensor)
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     std::vector<FuncPtr> behaviours;
     behaviours.push_back(&Agent::avoid);
     behaviours.push_back(&Agent::move);
@@ -38,6 +43,9 @@ cw::Agent::arbitrage(const cv::Vec3i sensor)
 bool
 cw::Agent::avoid(const cv::Vec3i sensor)
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     // if obstacle in front
     // then try to move left or right
     if (sensor[0]==0) // no obstacle
@@ -65,6 +73,9 @@ cw::Agent::avoid(const cv::Vec3i sensor)
 bool
 cw::Agent::move(const cv::Vec3i sensor)
 {
+#ifdef DEBUG
+    std::cerr << __TIME__ " " << __PRETTY_FUNCTION__ << std::endl;
+#endif
     _dxy.x = 0;
     _dxy.y = -_r; 
     return true;
